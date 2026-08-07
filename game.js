@@ -21,6 +21,8 @@ const BRICK_OFFSET_LEFT =
 
 const MAX_BOUNCE_ANGLE = (75 * Math.PI) / 180;
 
+const BRICK_ROW_COLORS = ['#e63946', '#f4a261', '#e9c46a', '#2a9d8f', '#457b9d', '#8e44ad'];
+
 const LEVELS = [
   [
     [1, 1, 1, 1, 1, 1, 1, 1],
@@ -93,6 +95,7 @@ function buildBricks(level) {
           width: BRICK_WIDTH,
           height: BRICK_HEIGHT,
           broken: false,
+          row: r,
         });
       }
     }
@@ -284,13 +287,27 @@ function drawBall() {
 function drawBricks() {
   for (const brick of state.bricks) {
     if (brick.broken) continue;
-    drawRect(brick.x, brick.y, brick.width, brick.height, '#e63946');
+    const color = BRICK_ROW_COLORS[brick.row % BRICK_ROW_COLORS.length];
+    drawRect(brick.x, brick.y, brick.width, brick.height, color);
+  }
+}
+
+function drawLivesIcons() {
+  const spacing = BALL_RADIUS * 2 + 6;
+  let x = canvas.width - 10 - BALL_RADIUS;
+  const y = 20;
+  for (let i = 0; i < state.lives; i++) {
+    ctx.fillStyle = '#eee';
+    ctx.beginPath();
+    ctx.arc(x, y, BALL_RADIUS, 0, Math.PI * 2);
+    ctx.fill();
+    x -= spacing;
   }
 }
 
 function drawHUD() {
   drawText(`Puntaje: ${state.score}`, 10, 25, { font: '16px sans-serif' });
-  drawText(`Vidas: ${state.lives}`, canvas.width - 10, 25, { align: 'right', font: '16px sans-serif' });
+  drawLivesIcons();
   drawText(`Nivel: ${state.level}`, canvas.width / 2, 25, { align: 'center', font: '16px sans-serif' });
 }
 
