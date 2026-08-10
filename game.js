@@ -249,6 +249,19 @@ function checkBallLost() {
   }
 }
 
+function updateParticles() {
+  for (const brick of state.bricks) {
+    if (!brick.destroying) continue;
+    for (const p of brick.particles) {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= 1;
+    }
+    brick.particles = brick.particles.filter((p) => p.life > 0);
+    if (brick.particles.length === 0) brick.destroying = false;
+  }
+}
+
 function checkLevelComplete() {
   const allBroken = state.bricks.every((b) => b.broken);
   if (!allBroken) return;
@@ -273,6 +286,7 @@ function update() {
   checkWallCollision();
   checkPaddleCollision();
   checkBrickCollision();
+  updateParticles();
   checkBallLost();
   if (state.screen === 'playing') checkLevelComplete();
 }
