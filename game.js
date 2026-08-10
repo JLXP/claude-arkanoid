@@ -96,6 +96,8 @@ function buildBricks(level) {
           height: BRICK_HEIGHT,
           broken: false,
           row: r,
+          destroying: false,
+          particles: [],
         });
       }
     }
@@ -188,6 +190,27 @@ function checkPaddleCollision() {
   }
 }
 
+function createParticles(brick) {
+  const color = BRICK_ROW_COLORS[brick.row % BRICK_ROW_COLORS.length];
+  const count = 6 + Math.floor(Math.random() * 3); // 6-8
+  const particles = [];
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1 + Math.random() * 2;
+    const maxLife = 9 + Math.floor(Math.random() * 4); // 9-12 frames
+    particles.push({
+      x: brick.x + Math.random() * brick.width,
+      y: brick.y + Math.random() * brick.height,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      life: maxLife,
+      maxLife,
+      color,
+    });
+  }
+  return particles;
+}
+
 function checkBrickCollision() {
   const ball = state.ball;
   for (const brick of state.bricks) {
@@ -199,6 +222,8 @@ function checkBrickCollision() {
     const distSq = diffX * diffX + diffY * diffY;
     if (distSq <= ball.radius * ball.radius) {
       brick.broken = true;
+      brick.particles = createParticles(brick);
+      brick.destroying = true;
       state.score += 10;
       const overlapX = ball.radius - Math.abs(diffX);
       const overlapY = ball.radius - Math.abs(diffY);
