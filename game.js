@@ -331,6 +331,19 @@ function drawBricks() {
   }
 }
 
+const PARTICLE_SIZE = 3;
+
+function drawParticles() {
+  for (const brick of state.bricks) {
+    if (!brick.destroying) continue;
+    for (const p of brick.particles) {
+      ctx.globalAlpha = p.life / p.maxLife;
+      drawRect(p.x, p.y, PARTICLE_SIZE, PARTICLE_SIZE, p.color);
+    }
+  }
+  ctx.globalAlpha = 1;
+}
+
 function drawLivesIcons() {
   const spacing = BALL_RADIUS * 2 + 6;
   let x = canvas.width - 10 - BALL_RADIUS;
@@ -364,6 +377,7 @@ function drawStartScreen() {
 function drawPlayingScreen() {
   clear();
   drawBricks();
+  drawParticles();
   drawPaddle();
   drawBall();
   drawHUD();
