@@ -25,6 +25,7 @@ const SOLID_BRICK_BASE_RATIO = 0.2; // 20% en nivel 1
 const SOLID_BRICK_RATIO_STEP = 0.1; // +10% por nivel
 const BALL_SPEED_INCREMENT = 0.05; // +5% por nivel
 const BALL_SPEED_CAP_MULTIPLIER = 2; // tope 2x BALL_SPEED
+const MAX_LEVEL_FOR_VICTORY = 10;
 
 const BRICK_ROW_COLORS = ['#e63946', '#f4a261', '#e9c46a', '#2a9d8f', '#457b9d', '#8e44ad'];
 const SOLID_BRICK_COLOR = '#7d8597';
@@ -289,7 +290,7 @@ function updateParticles() {
 function checkLevelComplete() {
   const allBroken = state.bricks.every((b) => b.broken);
   if (!allBroken) return;
-  if (state.level < 3) {
+  if (state.level < MAX_LEVEL_FOR_VICTORY) {
     startLevel(state.level + 1);
   } else {
     endGame('victory');
