@@ -23,6 +23,8 @@ const MAX_BOUNCE_ANGLE = (75 * Math.PI) / 180;
 
 const SOLID_BRICK_BASE_RATIO = 0.2; // 20% en nivel 1
 const SOLID_BRICK_RATIO_STEP = 0.1; // +10% por nivel
+const BALL_SPEED_INCREMENT = 0.05; // +5% por nivel
+const BALL_SPEED_CAP_MULTIPLIER = 2; // tope 2x BALL_SPEED
 
 const BRICK_ROW_COLORS = ['#e63946', '#f4a261', '#e9c46a', '#2a9d8f', '#457b9d', '#8e44ad'];
 const SOLID_BRICK_COLOR = '#7d8597';
@@ -124,12 +126,17 @@ function resetPaddle() {
   state.paddle.y = PADDLE_Y;
 }
 
+function levelBallSpeed(level) {
+  return BALL_SPEED * Math.min(1 + BALL_SPEED_INCREMENT * (level - 1), BALL_SPEED_CAP_MULTIPLIER);
+}
+
 function resetBall() {
   state.ball.x = state.paddle.x + state.paddle.width / 2;
   state.ball.y = state.paddle.y - BALL_RADIUS;
+  const speed = levelBallSpeed(state.level);
   const angle = -Math.PI / 3; // sale hacia arriba
-  state.ball.dx = BALL_SPEED * Math.cos(angle);
-  state.ball.dy = BALL_SPEED * Math.sin(angle);
+  state.ball.dx = speed * Math.cos(angle);
+  state.ball.dy = speed * Math.sin(angle);
 }
 
 function startLevel(level) {
