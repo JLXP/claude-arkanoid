@@ -25,6 +25,8 @@ const SOLID_BRICK_BASE_RATIO = 0.2; // 20% en nivel 1
 const SOLID_BRICK_RATIO_STEP = 0.1; // +10% por nivel
 
 const BRICK_ROW_COLORS = ['#e63946', '#f4a261', '#e9c46a', '#2a9d8f', '#457b9d', '#8e44ad'];
+const SOLID_BRICK_COLOR = '#7d8597';
+const SOLID_BRICK_HIT_COLOR = '#4a4e5c';
 
 const LEVELS = [
   [
@@ -341,7 +343,12 @@ function drawBall() {
 function drawBricks() {
   for (const brick of state.bricks) {
     if (brick.broken) continue;
-    const color = BRICK_ROW_COLORS[brick.row % BRICK_ROW_COLORS.length];
+    let color;
+    if (brick.solid) {
+      color = brick.hits < brick.maxHits ? SOLID_BRICK_HIT_COLOR : SOLID_BRICK_COLOR;
+    } else {
+      color = BRICK_ROW_COLORS[brick.row % BRICK_ROW_COLORS.length];
+    }
     drawRect(brick.x, brick.y, brick.width, brick.height, color);
   }
 }
