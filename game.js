@@ -2,6 +2,7 @@ const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
 
 const HIGHSCORE_KEY = 'arkanoid:highscore';
+const MAXLEVEL_KEY = 'arkanoid:maxlevel';
 
 const PADDLE_WIDTH = 80;
 const PADDLE_HEIGHT = 12;
@@ -66,6 +67,7 @@ const state = {
   score: 0,
   lives: 3,
   highScore: loadHighScore(),
+  maxLevel: loadMaxLevel(),
   paddle: { x: canvas.width / 2 - PADDLE_WIDTH / 2, y: PADDLE_Y, width: PADDLE_WIDTH, height: PADDLE_HEIGHT },
   ball: { x: 0, y: 0, dx: 0, dy: 0, radius: BALL_RADIUS },
   bricks: [],
@@ -88,6 +90,23 @@ function saveHighScore(value) {
     localStorage.setItem(HIGHSCORE_KEY, String(value));
   } catch (e) {
     // localStorage no disponible: el highscore queda solo en memoria.
+  }
+}
+
+function loadMaxLevel() {
+  try {
+    const v = localStorage.getItem(MAXLEVEL_KEY);
+    return v ? Number(v) : 0;
+  } catch (e) {
+    return 0;
+  }
+}
+
+function saveMaxLevel(value) {
+  try {
+    localStorage.setItem(MAXLEVEL_KEY, String(value));
+  } catch (e) {
+    // localStorage no disponible: el nivel máximo queda solo en memoria.
   }
 }
 
@@ -145,6 +164,10 @@ function startLevel(level) {
   state.bricks = buildBricks(level);
   resetPaddle();
   resetBall();
+  if (level > state.maxLevel) {
+    state.maxLevel = level;
+    saveMaxLevel(state.maxLevel);
+  }
 }
 
 function startGame() {
@@ -401,6 +424,7 @@ function drawStartScreen() {
   clear();
   drawText('ARKANOID', canvas.width / 2, 220, { align: 'center', font: 'bold 36px sans-serif' });
   drawText(`Highscore: ${state.highScore}`, canvas.width / 2, 300, { align: 'center', font: '20px sans-serif' });
+  drawText(`Nivel máximo: ${state.maxLevel}`, canvas.width / 2, 330, { align: 'center', font: '20px sans-serif' });
   drawButton(START_BUTTON, 'Start');
 }
 
