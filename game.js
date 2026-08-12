@@ -233,10 +233,13 @@ function checkBrickCollision() {
     const diffY = ball.y - closestY;
     const distSq = diffX * diffX + diffY * diffY;
     if (distSq <= ball.radius * ball.radius) {
-      brick.broken = true;
-      brick.particles = createParticles(brick);
-      brick.destroying = true;
-      state.score += 10;
+      brick.hits -= 1;
+      if (brick.hits <= 0) {
+        brick.broken = true;
+        brick.particles = createParticles(brick);
+        brick.destroying = true;
+        state.score += brick.solid ? 20 : 10;
+      }
       const overlapX = ball.radius - Math.abs(diffX);
       const overlapY = ball.radius - Math.abs(diffY);
       if (overlapX < overlapY) {
