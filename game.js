@@ -21,6 +21,9 @@ const BRICK_OFFSET_LEFT =
 
 const MAX_BOUNCE_ANGLE = (75 * Math.PI) / 180;
 
+const SOLID_BRICK_BASE_RATIO = 0.2; // 20% en nivel 1
+const SOLID_BRICK_RATIO_STEP = 0.1; // +10% por nivel
+
 const BRICK_ROW_COLORS = ['#e63946', '#f4a261', '#e9c46a', '#2a9d8f', '#457b9d', '#8e44ad'];
 
 const LEVELS = [
@@ -83,12 +86,18 @@ function saveHighScore(value) {
   }
 }
 
+function levelLayoutIndex(level) {
+  return (level - 1) % LEVELS.length;
+}
+
 function buildBricks(level) {
-  const layout = LEVELS[level - 1];
+  const layout = LEVELS[levelLayoutIndex(level)];
+  const solidRatio = Math.min(SOLID_BRICK_BASE_RATIO + SOLID_BRICK_RATIO_STEP * (level - 1), 1);
   const bricks = [];
   for (let r = 0; r < layout.length; r++) {
     for (let c = 0; c < layout[r].length; c++) {
       if (layout[r][c] === 1) {
+        const solid = Math.random() < solidRatio;
         bricks.push({
           x: BRICK_OFFSET_LEFT + c * (BRICK_WIDTH + BRICK_PADDING),
           y: BRICK_OFFSET_TOP + r * (BRICK_HEIGHT + BRICK_PADDING),
@@ -98,6 +107,9 @@ function buildBricks(level) {
           row: r,
           destroying: false,
           particles: [],
+          solid,
+          hits: solid ? 2 : 1,
+          maxHits: solid ? 2 : 1,
         });
       }
     }
